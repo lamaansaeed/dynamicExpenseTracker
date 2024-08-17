@@ -1,24 +1,27 @@
-const express = require('express');
-const bodyParser = require('body-parser');
 const cors = require('cors');
-const path = require('path')
+const path = require('path');
+const express = require('express');
 const app = express();
 const PORT = 3000;
+const User = require('./models/users');
 
 // Middleware
-app.use(bodyParser.json());
+app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 
-// Handle signup route
-app.post('/signup', (req, res) => {
-    const { name, email, password } = req.body;
 
-    console.log('Received Payload:', req.body);
-
-    // For demonstration purposes, we'll just send a success message back
-    res.json({ message: 'Signup successful!' });
-});
+// Sync the model with the database (create table if not exists)
+User.sync({ alter: true })
+    .then(() => {
+        console.log('User table synced successfully');
+    })
+    .catch((error) => {
+        console.error('Error syncing User table:', error);
+    });
+// Import Routes
+const userRoutes = require('./routes/user');
+app.use('/', userRoutes); // All user-related routes will be prefixed with '/user'
 
 // Start the server
 app.listen(PORT, () => {
