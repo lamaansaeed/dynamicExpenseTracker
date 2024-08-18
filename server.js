@@ -10,7 +10,6 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 
-
 // Sync the model with the database (create table if not exists)
 User.sync({ alter: true })
     .then(() => {
@@ -19,9 +18,15 @@ User.sync({ alter: true })
     .catch((error) => {
         console.error('Error syncing User table:', error);
     });
+
+// Serve login.html as the landing page
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
+
 // Import Routes
 const userRoutes = require('./routes/user');
-app.use('/', userRoutes); // All user-related routes will be prefixed with '/user'
+app.use('/', userRoutes); // All user-related routes
 
 // Start the server
 app.listen(PORT, () => {
