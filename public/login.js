@@ -29,10 +29,10 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
         // Display response message
         document.getElementById('responseMessage').textContent = result.message;
 
-        // If login is successful, redirect to another page
-        // if (result.success) {
-        //     window.location.href = '/dashboard'; // Example redirect after successful login
-        // }
+        //If login is successful, redirect to another page
+        if (result.success) {
+            window.location.href = '/expense.html'; // Example redirect after successful login
+        }
     } catch (error) {
         console.error('Error:', error);
     }
