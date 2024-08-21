@@ -4,7 +4,7 @@ const express = require('express');
 const app = express();
 const PORT = 3000;
 const User = require('./models/User');
-const Expense = require('./models/TempExpense');
+const Expense = require('./models/Expense');
 const dotenv = require('dotenv');
 dotenv.config(); // Load environment variables
 const sequelize = require('./database/database')
@@ -22,20 +22,20 @@ sequelize.sync({ alter: true })
     .catch((error) => {
         console.error('Error syncing User table:', error);
     });
-    Expense.sync({ alter: true })
-    .then(() => {
-        console.log('expense table synced successfully');
-    })
-    .catch((error) => {
-        console.error('Error syncing User table:', error);
-    });
-    User.sync({ alter: true })
-    .then(() => {
-        console.log('User table synced successfully');
-    })
-    .catch((error) => {
-        console.error('Error syncing User table:', error);
-    });
+    // Expense.sync({ alter: true })
+    // .then(() => {
+    //     console.log('expense table synced successfully');
+    // })
+    // .catch((error) => {
+    //     console.error('Error syncing User table:', error);
+    // });
+    // User.sync({ alter: true })
+    // .then(() => {
+    //     console.log('User table synced successfully');
+    // })
+    // .catch((error) => {
+    //     console.error('Error syncing User table:', error);
+    // });
 
 // Serve login.html as the landing page
 app.get('/', (req, res) => {

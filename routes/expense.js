@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Expense = require('../models/TempExpense');
+const Expense = require('../models/Expense');
 const authenticateToken = require('../middleware/authMiddleware');
 // Get all expenses
 router.get('/expense',authenticateToken, async (req, res) => {

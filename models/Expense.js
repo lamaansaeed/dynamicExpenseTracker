@@ -1,6 +1,7 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../database/database'); // Adjust the path if necessary
-const User = require('./User');
+const User = require('./User')
+;
 console.log(User);
 const Expense = sequelize.define('expense', {
     amount: {
@@ -24,5 +25,5 @@ const Expense = sequelize.define('expense', {
         }
     }
 });
-Expense.hasOne(User, { foreignKey: 'userId',as:'expense' });
+
 module.exports = Expense;
