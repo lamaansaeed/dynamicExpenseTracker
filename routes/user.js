@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/users');
+const User = require('../models/User');
 const bcrypt = require('bcrypt'); // To compare hashed passwords
-
+const jwt = require('jsonwebtoken');
+const authenticateToken = require('../middleware/authMiddleware'); 
 // Handle signup route
 router.post('/signup', async (req, res) => {
 
@@ -50,7 +51,9 @@ router.post('/login', async (req, res) => {
 
         if (match) {
             // If passwords match, authentication is successful
-            return res.json({ message: 'Login successful', success: true });
+            const token = jwt.sign({ userId: user.userId }, process.env.JWT_SECRET, { expiresIn: '1h' });
+            
+            return res.json({ message: 'Login successful', success: true ,token});
         } else {
             return res.status(401).json({ message: 'Invalid credentials', success: false });
         }

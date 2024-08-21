@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const Expense = require('../models/expense');
-
+const Expense = require('../models/TempExpense');
+const authenticateToken = require('../middleware/authMiddleware');
 // Get all expenses
-router.get('/expense', async (req, res) => {
+router.get('/expense',authenticateToken, async (req, res) => {
     try {
-        const expenses = await Expense.findAll();
+        const expenses = await Expense.findAll({where: { userId: req.user.userId }});
         res.json(expenses);
     } catch (error) {
         console.error('Error fetching expenses:', error);
@@ -14,12 +14,12 @@ router.get('/expense', async (req, res) => {
 });
 
 // Add a new expense
-router.post('/expense', async (req, res) => {
+router.post('/expense',authenticateToken, async (req, res) => {
     console.log('i am here 1')
     const { amount, description, category } = req.body;
 
     try {
-        const expense = await Expense.create({ amount, description, category });
+        const expense = await Expense.create({ amount, description, category,userId: req.user.userId });
         res.status(201).json(expense);
     } catch (error) {
         console.error('Error adding expense:', error);
@@ -28,11 +28,11 @@ router.post('/expense', async (req, res) => {
 });
 
 // Delete an expense
-router.delete('/expense/:id', async (req, res) => {
+router.delete('/expense/:id',authenticateToken, async (req, res) => {
     const { id } = req.params;
 
     try {
-        const result = await Expense.destroy({ where: { id } });
+        const result = await Expense.destroy({ where: { id, userId: req.user.userId } });
 
         if (result) {
             res.status(204).end();

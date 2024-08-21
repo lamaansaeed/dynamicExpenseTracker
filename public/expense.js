@@ -12,11 +12,13 @@ document.getElementById('expenseForm').addEventListener('submit', async function
     };
 
     try {
+        const token = localStorage.getItem('token');
         // POST request to add an expense
         const response = await fetch('/expense', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify(payload)
         });
@@ -32,7 +34,12 @@ document.getElementById('expenseForm').addEventListener('submit', async function
 // Function to load and display expenses
 async function loadExpenses() {
     try {
-        const response = await fetch('/expense');
+        const token = localStorage.getItem('token');
+        const response = await fetch('/expense',{
+            headers:{
+                'Authorization': `Bearer ${token}`
+            }
+        });
         const expenses = await response.json();
 
         const expenseList = document.getElementById('expenseList');
@@ -52,9 +59,15 @@ async function loadExpenses() {
 // Function to delete an expense
 async function deleteExpense(id) {
     try {
+        const token = localStorage.getItem('token'); // Retrieve token from localStorage
+
         await fetch(`/expense/${id}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}` // Include token in headers
+            }
         });
+
         loadExpenses(); // Reload the list after deletion
     } catch (error) {
         console.error('Error:', error);

@@ -26,12 +26,12 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
 
         const result = await response.json();
 
-        // Display response message
         document.getElementById('responseMessage').textContent = result.message;
 
-        //If login is successful, redirect to another page
         if (result.success) {
-            window.location.href = '/expense.html'; // Example redirect after successful login
+            // Store JWT token in localStorage
+            localStorage.setItem('token', result.token);
+            window.location.href = '/expense.html'; // Redirect after successful login
         }
     } catch (error) {
         console.error('Error:', error);

@@ -3,8 +3,11 @@ const path = require('path');
 const express = require('express');
 const app = express();
 const PORT = 3000;
-const User = require('./models/users');
-const Expense = require('./models/expense');
+const User = require('./models/User');
+const Expense = require('./models/TempExpense');
+const dotenv = require('dotenv');
+dotenv.config(); // Load environment variables
+const sequelize = require('./database/database')
 
 // Middleware
 app.use(express.json());
@@ -12,7 +15,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 
 // Sync the model with the database (create table if not exists)
-User.sync({ alter: true })
+sequelize.sync({ alter: true })
     .then(() => {
         console.log('User table synced successfully');
     })
@@ -22,6 +25,13 @@ User.sync({ alter: true })
     Expense.sync({ alter: true })
     .then(() => {
         console.log('expense table synced successfully');
+    })
+    .catch((error) => {
+        console.error('Error syncing User table:', error);
+    });
+    User.sync({ alter: true })
+    .then(() => {
+        console.log('User table synced successfully');
     })
     .catch((error) => {
         console.error('Error syncing User table:', error);
