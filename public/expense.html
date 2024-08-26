@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Expense Tracker</title>
     <link rel="stylesheet" href="style.css">
+    <script>
+        // Fetch Razorpay key and expose it to your frontend JS
+        fetch('/api/config')
+          .then(response => response.json())
+          .then(data => {
+            window.razorpayKeyId = data.razorpayKeyId;
+          });
+      </script>
 </head>
 <body>
     <h1>Expense Tracker</h1>
@@ -28,7 +36,10 @@
 
     <h2>Your Expenses</h2>
     <ul id="expenseList"></ul>
+    <button id="buy-premium-btn">Buy Premium</button>
 
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="razorpay.js"></script>
     <script src="expense.js"></script>
 </body>
 </html>

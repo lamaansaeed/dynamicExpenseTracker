@@ -1,8 +1,6 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../database/database'); // Adjust the path if necessary
-const User = require('./User')
-;
-console.log(User);
+
 const Expense = sequelize.define('expense', {
     amount: {
         type: DataTypes.FLOAT,

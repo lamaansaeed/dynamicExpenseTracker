@@ -39,7 +39,7 @@ router.delete('/expense/:id',authenticateToken, async (req, res) => {
         } else {
             res.status(404).json({ message: 'Expense not found' });
         }
-    } catch (error) {
+    } catch (error) {3
         console.error('Error deleting expense:', error);
         res.status(500).json({ message: 'Server error, please try again later' });
     }

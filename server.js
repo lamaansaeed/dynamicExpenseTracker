@@ -45,9 +45,17 @@ app.get('/', (req, res) => {
 // Import Routes
 const userRoutes = require('./routes/user');
 const expenseRoutes = require('./routes/expense');
+const razorpayRoutes = require('./routes/razorpay');
+// const dotenv = require('dotenv');
+// dotenv.config();
 app.use('/', userRoutes); // All user-related routes
 app.use('/', expenseRoutes); // Use the expense routes
+app.use('/',razorpayRoutes);
 
+// Endpoint to get Razorpay key
+app.get('/api/config', (req, res) => {
+    res.json({ razorpayKeyId: process.env.RAZORPAY_KEY_ID });
+  });
 // Start the server
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
