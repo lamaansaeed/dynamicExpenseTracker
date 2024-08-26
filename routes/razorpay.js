@@ -6,7 +6,7 @@ const User = require('../models/User');
 const Order =require('../models/Order');
 const authenticateToken = require('../middleware/authMiddleware');
 const dotenv = require('dotenv');
-
+const jwt = require('jsonwebtoken');
 dotenv.config();
 
 
@@ -76,7 +76,13 @@ router.post('/verify-payment',authenticateToken, async (req, res) => {
         order.status = 'completed';
         await order.save();
 
-        res.status(200).json({ success: true });
+        const token = jwt.sign(
+            { userId: user.userId, premium: user.premium },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' } // Adjust expiration as needed
+        );
+
+        res.status(200).json({ success: true, token });
     } else {
         // Payment verification failed
         const order = await Order.findOne({ where: { orderId: razorpay_order_id } });

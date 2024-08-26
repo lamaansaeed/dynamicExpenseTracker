@@ -32,6 +32,7 @@ document.getElementById('buy-premium-btn').onclick = async function(e) {
             const result = await paymentResult.json();
             if (result.success) {
                 alert("You are now a premium member!");
+                localStorage.setItem('token', result.token);
                 // Update UI or redirect as needed
             } else {
                 alert("Payment failed or could not verify the payment.");
