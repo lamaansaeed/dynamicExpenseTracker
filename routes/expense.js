@@ -20,15 +20,18 @@ router.get('/expense',authenticateToken, async (req, res) => {
 router.post('/expense',authenticateToken, async (req, res) => {
     console.log('i am here 1')
     const { amount, description, category } = req.body;
-
+     const transaction = await  sequelize.transaction()
     try {
-        const expense = await Expense.create({ amount, description, category,userId: req.user.userId });
+        const expense = await Expense.create({ amount, description, category,userId: req.user.userId },{transaction});
         await User.increment('totalExpense', {
             by: amount,
-            where: { userId: req.user.userId }
+            where: { userId: req.user.userId },
+            transaction: transaction
         });
+        await transaction.commit();
         res.status(201).json(expense);
     } catch (error) {
+        await transaction.rollback();
         console.error('Error adding expense:', error);
         res.status(500).json({ message: 'Server error, please try again later' });
     }
@@ -71,16 +74,24 @@ router.get('/expense/leaderboard', async (req, res) => {
 // Delete an expense
 router.delete('/expense/:id',authenticateToken, async (req, res) => {
     const { id } = req.params;
-
+    const transaction = await  sequelize.transaction()
     try {
-        const result = await Expense.destroy({ where: { id, userId: req.user.userId } });
+        const result = await Expense.findOne({ where: { id, userId: req.user.userId } });
 
+        await User.decrement('totalExpense', {
+            by: result.amount,
+            where: { userId: req.user.userId },
+            transaction: transaction
+        });
+        await result.destroy({transaction});
+        await transaction.commit();
         if (result) {
             res.status(204).end();
         } else {
             res.status(404).json({ message: 'Expense not found' });
         }
-    } catch (error) {3
+    } catch (error) {
+        await transaction.rollback();
         console.error('Error deleting expense:', error);
         res.status(500).json({ message: 'Server error, please try again later' });
     }

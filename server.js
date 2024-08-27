@@ -29,7 +29,7 @@ Object.keys(models).forEach(modelName => {
     }
 });
 // Sync the model with the database (create table if not exists)
-sequelize.sync({ alter: true })
+sequelize.sync({ force: true })
     .then(() => {
         console.log('User table synced successfully');
     })
