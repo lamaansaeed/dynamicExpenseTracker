@@ -23,6 +23,10 @@ router.post('/expense',authenticateToken, async (req, res) => {
 
     try {
         const expense = await Expense.create({ amount, description, category,userId: req.user.userId });
+        await User.increment('totalExpense', {
+            by: amount,
+            where: { userId: req.user.userId }
+        });
         res.status(201).json(expense);
     } catch (error) {
         console.error('Error adding expense:', error);
@@ -53,17 +57,8 @@ router.get('/expense/leaderboard', async (req, res) => {
     try {
         // Fetch all users and their total expenses
         const leaderboard = await User.findAll({
-            attributes: [
-                'name',
-                [sequelize.fn('SUM', sequelize.col('expense.amount')), 'totalExpense']
-            ],
-            include: [{
-                model: Expense,
-                as: 'expense',
-                attributes: []
-            }],
-            group: ['user.userId'],
-            order: [[sequelize.literal('totalExpense'), 'DESC']]
+            attributes: ['name', 'totalExpense'],
+            order: [['totalExpense', 'DESC']]
         });
 
         res.json(leaderboard);

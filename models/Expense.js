@@ -1,6 +1,6 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../database/database'); // Adjust the path if necessary
-
+const User = require('../models/User')
 const Expense = sequelize.define('expense', {
     amount: {
         type: DataTypes.FLOAT,
@@ -23,5 +23,8 @@ const Expense = sequelize.define('expense', {
         }
     }
 });
+Expense.associate = (models) => {
+    Expense.belongsTo(models.User, { foreignKey: 'userId', as: 'user' });
+};
 
 module.exports = Expense;

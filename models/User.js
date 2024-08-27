@@ -29,11 +29,15 @@ const User = sequelize.define('user', {
     premium: {
         type: DataTypes.BOOLEAN,
         defaultValue: false // Users are not premium by default
-    }
+    },
+    totalExpense: {
+        type: Sequelize.FLOAT,
+        defaultValue: 0,
+    },
 });
-User.hasMany(Expense, { foreignKey: 'userId', onDelete: 'CASCADE',as:'expense' });
-Expense.hasOne(User, { foreignKey: 'userId',as:'user' });
-User.hasMany(Order,{ foreignKey: 'userId', onDelete: 'CASCADE' ,as:'order'})
-Order.hasOne(User, { foreignKey: 'userId',as:'user' })
+User.associate = (models) => {
+    User.hasMany(models.Expense, { foreignKey: 'userId', onDelete: 'CASCADE', as: 'expense' });
+    User.hasMany(models.Order, { foreignKey: 'userId', onDelete: 'CASCADE', as: 'order' });
+};
 
 module.exports = User;

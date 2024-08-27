@@ -5,6 +5,7 @@ const app = express();
 const PORT = 3000;
 const User = require('./models/User');
 const Expense = require('./models/Expense');
+const Order =require('./models/Order');
 const dotenv = require('dotenv');
 dotenv.config(); // Load environment variables
 const sequelize = require('./database/database')
@@ -14,6 +15,19 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 
+
+const models = {
+    User,
+    Expense,
+    Order
+};
+
+// Setup associations
+Object.keys(models).forEach(modelName => {
+    if (models[modelName].associate) {
+        models[modelName].associate(models);
+    }
+});
 // Sync the model with the database (create table if not exists)
 sequelize.sync({ alter: true })
     .then(() => {

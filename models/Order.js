@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../database/database');
-
+const User = require('../models/User')
 const Order = sequelize.define('Order', {
     id: {
         type: DataTypes.UUID,
@@ -24,5 +24,8 @@ const Order = sequelize.define('Order', {
 }, {
     tableName: 'orders'
 });
+Order.associate = (models) => {
+    Order.belongsTo(models.User, { foreignKey: 'userId', as: 'user' });
+};
 
 module.exports = Order;
