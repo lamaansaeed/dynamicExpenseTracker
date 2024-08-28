@@ -37,3 +37,27 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
         console.error('Error:', error);
     }
 });
+document.getElementById('forgotPasswordButton').addEventListener('click', function() {
+    document.getElementById('forgotPasswordForm').style.display = 'block';
+});
+
+document.getElementById('forgotPasswordForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
+
+    const email = document.getElementById('forgotEmail').value;
+
+    try {
+        const response = await fetch('/forgot-password', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email })
+        });
+
+        const result = await response.json();
+        document.getElementById('responseMessage').textContent = result.message;
+    } catch (error) {
+        console.error('Error:', error);
+    }
+});

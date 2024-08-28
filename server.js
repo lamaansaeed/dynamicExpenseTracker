@@ -29,7 +29,7 @@ Object.keys(models).forEach(modelName => {
     }
 });
 // Sync the model with the database (create table if not exists)
-sequelize.sync({ force: true })
+sequelize.sync({ alter: true })
     .then(() => {
         console.log('User table synced successfully');
     })
@@ -60,11 +60,13 @@ app.get('/', (req, res) => {
 const userRoutes = require('./routes/user');
 const expenseRoutes = require('./routes/expense');
 const razorpayRoutes = require('./routes/razorpay');
+const forgotpassRoutes = require('./routes/forgotPass');
 // const dotenv = require('dotenv');
 // dotenv.config();
 app.use('/', userRoutes); // All user-related routes
 app.use('/', expenseRoutes); // Use the expense routes
 app.use('/',razorpayRoutes);
+app.use('/',forgotpassRoutes);
 
 // Endpoint to get Razorpay key
 app.get('/api/config', (req, res) => {
