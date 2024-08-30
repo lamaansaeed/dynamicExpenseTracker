@@ -1,8 +1,7 @@
 document.getElementById('resetPasswordForm').addEventListener('submit', async function(event) {
     event.preventDefault();
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get('token');
+    const token = window.location.pathname.split('/').pop();
     const newPassword = document.getElementById('newPassword').value;
     const confirmPassword = document.getElementById('confirmPassword').value;
 
@@ -11,8 +10,10 @@ document.getElementById('resetPasswordForm').addEventListener('submit', async fu
         return;
     }
 
+    localStorage.setItem('token', token); // Store the token in local storage
+
     try {
-        const response = await fetch(`/reset-password/${token}`, {
+        const response = await fetch(`/resetting-password/${token}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -24,6 +25,7 @@ document.getElementById('resetPasswordForm').addEventListener('submit', async fu
         document.getElementById('responseMessage').textContent = result.message;
 
         if (result.success) {
+            localStorage.removeItem('token'); // Remove the token from local storage
             window.location.href = '/login.html';
         }
     } catch (error) {
