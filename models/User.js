@@ -2,7 +2,8 @@ const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../database/database'); // Assuming you have a database configuration file
 const Expense = require('./Expense'); // Import Expense model
 const Order = require('./Order');
-console.log('i am here');
+const Income =require('./Income');
+
 const User = sequelize.define('user', {
     
 
@@ -34,10 +35,15 @@ const User = sequelize.define('user', {
         type: Sequelize.FLOAT,
         defaultValue: 0,
     },
+    totalIncome:{
+        type:Sequelize.FLOAT,
+        defaultValue:0,
+    },
 });
 User.associate = (models) => {
     User.hasMany(models.Expense, { foreignKey: 'userId', onDelete: 'CASCADE', as: 'expense' });
     User.hasMany(models.Order, { foreignKey: 'userId', onDelete: 'CASCADE', as: 'order' });
+    User.hasMany(models.Income,  {foreignKey:'userId',onDelete: 'CASCADE', as: 'income'})
 };
 
 module.exports = User;

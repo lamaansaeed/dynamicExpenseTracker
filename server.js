@@ -6,6 +6,7 @@ const PORT = 3000;
 const User = require('./models/User');
 const Expense = require('./models/Expense');
 const Order =require('./models/Order');
+const Income = require('./models/Income');
 const dotenv = require('dotenv');
 dotenv.config(); // Load environment variables
 const sequelize = require('./database/database')
@@ -19,7 +20,8 @@ app.use(cors());
 const models = {
     User,
     Expense,
-    Order
+    Order,
+    Income
 };
 
 // Setup associations
@@ -61,10 +63,12 @@ const userRoutes = require('./routes/user');
 const expenseRoutes = require('./routes/expense');
 const razorpayRoutes = require('./routes/razorpay');
 const forgotpassRoutes = require('./routes/forgotPass');
+const incomeRoutes = require('./routes/income');
 // const dotenv = require('dotenv');
 // dotenv.config();
 app.use('/', userRoutes); // All user-related routes
 app.use('/', expenseRoutes); // Use the expense routes
+app.use('/',incomeRoutes);
 app.use('/',razorpayRoutes);
 app.use('/',forgotpassRoutes);
 
