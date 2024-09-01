@@ -6,7 +6,7 @@ document.getElementById('expenseForm').addEventListener('submit', async function
     const category = document.getElementById('category').value;
 
     const payload = {
-        amount: amount,
+        expenseAmount: amount,
         description: description,
         category: category
     };
@@ -49,12 +49,17 @@ async function loadExpenses() {
 
             const premiumButton = document.getElementById('buy-premium-btn');
             const leaderboardButton = document.getElementById('show-leaderboard-btn');
+            const generateReportButton = document.getElementById('generate-report-btn');
             // If user is a premium member, update the button text
             if (premiumData.premium) {
                 premiumButton.textContent = 'You are a premium member';
                 premiumButton.disabled = true; // Optionally disable the button
                 leaderboardButton.style.display = 'block';
                 document.getElementById('show-leaderboard-btn').addEventListener('click', loadLeaderboard);
+                generateReportButton.style.display='block';
+                document.getElementById('generate-report-btn').addEventListener('click', function() {
+                    window.location.href = '/report.html';
+                });
             }
         }
         const response = await fetch('/expense',{
@@ -69,7 +74,7 @@ async function loadExpenses() {
 
         expenses.forEach(expense => {
             const li = document.createElement('li');
-            li.innerHTML = `${expense.amount} - ${expense.description} - ${expense.category} 
+            li.innerHTML = `${expense.expenseAmount} - ${expense.description} - ${expense.category} 
             <button onclick="deleteExpense(${expense.id})">Delete</button>`;
             expenseList.appendChild(li);
         });

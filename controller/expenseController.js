@@ -13,12 +13,12 @@ exports.getExpenses = async (req, res) => {
 };
 
 exports.addExpense = async (req, res) => {
-    const { amount, description, category } = req.body;
+    const { expenseAmount, description, category } = req.body;
     const transaction = await sequelize.transaction();
     try {
-        const expense = await Expense.create({ amount, description, category, userId: req.user.userId }, { transaction });
+        const expense = await Expense.create({ expenseAmount, description, category, userId: req.user.userId }, { transaction });
         await User.increment('totalExpense', {
-            by: amount,
+            by: expenseAmount,
             where: { userId: req.user.userId },
             transaction: transaction
         });
@@ -71,7 +71,7 @@ exports.deleteExpense = async (req, res) => {
         const result = await Expense.findOne({ where: { id, userId: req.user.userId } });
 
         await User.decrement('totalExpense', {
-            by: result.amount,
+            by: result.expenseAmount,
             where: { userId: req.user.userId },
             transaction: transaction
         });

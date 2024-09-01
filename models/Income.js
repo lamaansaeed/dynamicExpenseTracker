@@ -2,7 +2,7 @@ const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../database/database'); // Adjust the path if necessary
 const User = require('./User')
 const Income = sequelize.define('income', {
-    amount: {
+    incomeAmount: {
         type: DataTypes.FLOAT,
         allowNull: false,
     },

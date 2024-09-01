@@ -14,12 +14,12 @@ exports.getIncomes = async (req, res) => {
 };
 
 exports.addIncome = async (req, res) => {
-    const { amount, description, category } = req.body;
+    const { incomeAmount, description, category } = req.body;
     const transaction = await sequelize.transaction();
     try {
-        const income = await Income.create({ amount, description, category, userId: req.user.userId }, { transaction });
+        const income = await Income.create({ incomeAmount, description, category, userId: req.user.userId }, { transaction });
         await User.increment('totalIncome', {
-            by: amount,
+            by: incomeAmount,
             where: { userId: req.user.userId },
             transaction: transaction
         });
@@ -55,7 +55,7 @@ exports.getLeaderboard = async (req, res) => {
     try {
         const leaderboard = await User.findAll({
             attributes: ['name', 'totalIncome'],
-            order: [['totalExpense', 'DESC']]
+            order: [['totalIncome', 'DESC']]
         });
 
         res.json(leaderboard);
@@ -72,7 +72,7 @@ exports.deleteIncome = async (req, res) => {
         const result = await Expense.findOne({ where: { id, userId: req.user.userId } });
 
         await User.decrement('totalIncome', {
-            by: result.amount,
+            by: result.incomeAmount,
             where: { userId: req.user.userId },
             transaction: transaction
         });

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .button-container {
+            margin-bottom: 20px;
+        }
+        .button-container button {
+            margin-right: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        .totals-row {
+            font-weight: bold;
+        }
+        .savings {
+            color: green;
+        }
+        .debt {
+            color: red;
+        }
+        .download-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="button-container">
+        <button id="dailyReportBtn">Generate Today's Report</button>
+        <button id="weeklyReportBtn">Generate Weekly Report</button>
+        <button id="monthlyReportBtn">Generate Monthly Report</button>
+        <button id="yearlyReportBtn">Generate Yearly Report</button>
+    </div>
+
+    <table id="reportTable">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th>Income</th>
+                <th>Expense</th>
+            </tr>
+        </thead>
+        <tbody id="reportTableBody">
+            <!-- Rows will be dynamically generated here -->
+        </tbody>
+        <tfoot>
+            <tr class="totals-row">
+                <td colspan="3">Total</td>
+                <td id="totalIncome">0</td>
+                <td id="totalExpense">0</td>
+            </tr>
+            <tr class="totals-row">
+                <td colspan="4">Net</td>
+                <td id="netAmount" class=""></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <button id="downloadReportBtn" class="download-btn">Download Report</button>
+
+    <script src="report.js"></script>
+</body>
+</html>

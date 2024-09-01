@@ -64,6 +64,7 @@ const expenseRoutes = require('./routes/expense');
 const razorpayRoutes = require('./routes/razorpay');
 const forgotpassRoutes = require('./routes/forgotPass');
 const incomeRoutes = require('./routes/income');
+const reportRoutes = require('./routes/report');
 // const dotenv = require('dotenv');
 // dotenv.config();
 app.use('/', userRoutes); // All user-related routes
@@ -71,6 +72,7 @@ app.use('/', expenseRoutes); // Use the expense routes
 app.use('/',incomeRoutes);
 app.use('/',razorpayRoutes);
 app.use('/',forgotpassRoutes);
+app.use('/',reportRoutes);
 
 // Endpoint to get Razorpay key
 app.get('/api/config', (req, res) => {

@@ -6,7 +6,7 @@ document.getElementById('incomeForm').addEventListener('submit', async function(
     const category = document.getElementById('category').value;
 
     const payload = {
-        amount: amount,
+        incomeAmount: amount,
         description: description,
         category: category
     };
@@ -49,12 +49,17 @@ async function loadIncomes() {
 
             const premiumButton = document.getElementById('buy-premium-btn');
             const leaderboardButton = document.getElementById('show-leaderboard-btn');
+            const generateReportButton = document.getElementById('generate-report-btn');
             // If user is a premium member, update the button text
             if (premiumData.premium) {
                 premiumButton.textContent = 'You are a premium member';
                 premiumButton.disabled = true; // Optionally disable the button
                 leaderboardButton.style.display = 'block';
                 document.getElementById('show-leaderboard-btn').addEventListener('click', loadLeaderboard);
+                generateReportButton.style.display='block';
+                document.getElementById('generate-report-btn').addEventListener('click', function() {
+                    window.location.href = '/report.html';
+                });
             }
         }
         const response = await fetch('/income',{
@@ -69,7 +74,7 @@ async function loadIncomes() {
 
         incomes.forEach(income => {
             const li = document.createElement('li');
-            li.innerHTML = `${income.amount} - ${income.description} - ${income.category} 
+            li.innerHTML = `${income.incomeAmount} - ${income.description} - ${income.category} 
             <button onclick="deleteExpense(${income.id})">Delete</button>`;
             incomeList.appendChild(li);
         });
@@ -100,7 +105,7 @@ async function loadLeaderboard() {
 
             leaderboardData.forEach(user => {
                 const li = document.createElement('li');
-                li.innerHTML = `${user.name} - Expense: ${user.totalExpense}`;
+                li.innerHTML = `${user.name} - Income: ${user.totalIncome}`;
                 leaderboardList.appendChild(li);
             });
 
@@ -124,11 +129,11 @@ async function deleteIncome(id) {
             }
         });
 
-        loadExpenses(); // Reload the list after deletion
+        loadIncomes(); // Reload the list after deletion
     } catch (error) {
         console.error('Error:', error);
     }
 }
 
 // Load expenses when the page loads
-window.onload = loadExpenses;
+window.onload = loadIncomes;
