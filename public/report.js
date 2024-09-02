@@ -69,6 +69,21 @@ document.getElementById('monthlyReportBtn').addEventListener('click', () => gene
 document.getElementById('yearlyReportBtn').addEventListener('click', () => generateReport('yearly'));
 
 // Placeholder for download report functionality
-document.getElementById('downloadReportBtn').addEventListener('click', () => {
-    alert('Download functionality will be added later.');
+document.getElementById('downloadReportBtn').addEventListener('click', async () => {
+    const htmlContent = document.documentElement.outerHTML; // Get entire HTML
+    const response = await fetch('/download-report', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ html: htmlContent })
+    });
+
+    const { downloadUrl } = await response.json();
+
+    if (downloadUrl) {
+        window.location.href = downloadUrl; // Trigger download
+    } else {
+        alert('Error generating or downloading report');
+    }
 });
