@@ -35,8 +35,10 @@ document.getElementById('expenseForm').addEventListener('submit', async function
 async function loadExpenses(page = 1) {
     try {
         const token = localStorage.getItem('token');
-        
-        // Check if the user is a premium member
+
+        // Retrieve the number of items per page from local storage or set default
+        let itemsPerPage = localStorage.getItem('itemsPerPage') || 10;
+
         const checkPremiumResponse = await fetch('/expense/check-premium', {
             method: 'GET',
             headers: {
@@ -45,16 +47,15 @@ async function loadExpenses(page = 1) {
         });
 
         if (checkPremiumResponse.ok) {
-            const premiumData = await checkPremiumResponse.json();
+            var premiumData = await checkPremiumResponse.json();
 
             const premiumButton = document.getElementById('buy-premium-btn');
             const leaderboardButton = document.getElementById('show-leaderboard-btn');
             const generateReportButton = document.getElementById('generate-report-btn');
             
-            // If user is a premium member, update the button text
             if (premiumData.premium) {
                 premiumButton.textContent = 'You are a premium member';
-                premiumButton.disabled = true; // Optionally disable the button
+                premiumButton.disabled = true;
                 leaderboardButton.style.display = 'block';
                 document.getElementById('show-leaderboard-btn').addEventListener('click', loadLeaderboard);
                 generateReportButton.style.display = 'block';
@@ -64,9 +65,7 @@ async function loadExpenses(page = 1) {
             }
         }
 
-        // Fetch expenses with pagination
-        const limit = 10;
-        const response = await fetch(`/expense?page=${page}&limit=${limit}`, {
+        const response = await fetch(`/expense?page=${page}&limit=${itemsPerPage}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -75,7 +74,7 @@ async function loadExpenses(page = 1) {
         const data = await response.json();
 
         const expenseList = document.getElementById('expenseList');
-        expenseList.innerHTML = ''; // Clear the list before appending
+        expenseList.innerHTML = ''; 
 
         data.expenses.forEach(expense => {
             const li = document.createElement('li');
@@ -84,9 +83,8 @@ async function loadExpenses(page = 1) {
             expenseList.appendChild(li);
         });
 
-        // Handle pagination buttons
         const pagination = document.getElementById('pagination');
-        pagination.innerHTML = ''; // Clear pagination links
+        pagination.innerHTML = ''; 
 
         for (let i = 1; i <= data.totalPages; i++) {
             const button = document.createElement('button');
@@ -96,7 +94,6 @@ async function loadExpenses(page = 1) {
             pagination.appendChild(button);
         }
 
-        // Load leaderboard if the user is premium
         const leaderboardList = document.getElementById('leaderboardList');
         if (premiumData.premium && leaderboardList.innerHTML !== '') {
             loadLeaderboard();
@@ -106,6 +103,13 @@ async function loadExpenses(page = 1) {
         console.error('Error:', error);
     }
 }
+
+// Store the user’s preference for items per page
+document.getElementById('itemsPerPage').addEventListener('change', function() {
+    const itemsPerPage = this.value;
+    localStorage.setItem('itemsPerPage', itemsPerPage);
+    loadExpenses(); // Reload expenses with the new setting
+});
 
 async function loadLeaderboard() {
     try {
@@ -155,4 +159,8 @@ async function deleteExpense(id) {
 }
 
 // Load expenses when the page loads
-window.onload = loadExpenses;
+window.onload = function() {
+    const storedItemsPerPage = localStorage.getItem('itemsPerPage') || 10;
+    document.getElementById('itemsPerPage').value = storedItemsPerPage;
+    loadExpenses();
+};
