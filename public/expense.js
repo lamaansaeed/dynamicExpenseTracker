@@ -32,7 +32,7 @@ document.getElementById('expenseForm').addEventListener('submit', async function
 });
 
 // Function to load and display expenses
-async function loadExpenses() {
+async function loadExpenses(page = 1) {
     try {
         const token = localStorage.getItem('token');
         
@@ -45,49 +45,68 @@ async function loadExpenses() {
         });
 
         if (checkPremiumResponse.ok) {
-            var premiumData = await checkPremiumResponse.json();
+            const premiumData = await checkPremiumResponse.json();
 
             const premiumButton = document.getElementById('buy-premium-btn');
             const leaderboardButton = document.getElementById('show-leaderboard-btn');
             const generateReportButton = document.getElementById('generate-report-btn');
+            
             // If user is a premium member, update the button text
             if (premiumData.premium) {
                 premiumButton.textContent = 'You are a premium member';
                 premiumButton.disabled = true; // Optionally disable the button
                 leaderboardButton.style.display = 'block';
                 document.getElementById('show-leaderboard-btn').addEventListener('click', loadLeaderboard);
-                generateReportButton.style.display='block';
+                generateReportButton.style.display = 'block';
                 document.getElementById('generate-report-btn').addEventListener('click', function() {
                     window.location.href = '/report.html';
                 });
             }
         }
-        const response = await fetch('/expense',{
-            headers:{
+
+        // Fetch expenses with pagination
+        const limit = 10;
+        const response = await fetch(`/expense?page=${page}&limit=${limit}`, {
+            headers: {
                 'Authorization': `Bearer ${token}`
             }
         });
-        const expenses = await response.json();
+
+        const data = await response.json();
 
         const expenseList = document.getElementById('expenseList');
         expenseList.innerHTML = ''; // Clear the list before appending
 
-        expenses.forEach(expense => {
+        data.expenses.forEach(expense => {
             const li = document.createElement('li');
             li.innerHTML = `${expense.expenseAmount} - ${expense.description} - ${expense.category} 
             <button onclick="deleteExpense(${expense.id})">Delete</button>`;
             expenseList.appendChild(li);
         });
+
+        // Handle pagination buttons
+        const pagination = document.getElementById('pagination');
+        pagination.innerHTML = ''; // Clear pagination links
+
+        for (let i = 1; i <= data.totalPages; i++) {
+            const button = document.createElement('button');
+            button.textContent = i;
+            button.disabled = i === data.currentPage;
+            button.onclick = () => loadExpenses(i);
+            pagination.appendChild(button);
+        }
+
+        // Load leaderboard if the user is premium
         const leaderboardList = document.getElementById('leaderboardList');
-        // const premiumData = await checkPremiumResponse.json();
-        if(premiumData.premium & leaderboardList.innerHTML!==''){
+        if (premiumData.premium && leaderboardList.innerHTML !== '') {
             loadLeaderboard();
         }
-    
+
     } catch (error) {
         console.error('Error:', error);
     }
 }
+
 async function loadLeaderboard() {
     try {
         const token = localStorage.getItem('token');

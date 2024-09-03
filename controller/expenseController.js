@@ -4,8 +4,23 @@ const sequelize = require('../database/database');
 
 exports.getExpenses = async (req, res) => {
     try {
-        const expenses = await Expense.findAll({ where: { userId: req.user.userId } });
-        res.json(expenses);
+        const { page = 1, limit = 10 } = req.query;
+
+        const offset = (page - 1) * limit;
+
+        const { count, rows: expenses } = await Expense.findAndCountAll({
+            where: { userId: req.user.userId },
+            limit: parseInt(limit),
+            offset: parseInt(offset),
+            order: [['createdAt', 'DESC']]  // Sorting by the most recent expenses
+        });
+
+        res.json({
+            totalItems: count,
+            totalPages: Math.ceil(count / limit),
+            currentPage: parseInt(page),
+            expenses
+        });
     } catch (error) {
         console.error('Error fetching expenses:', error);
         res.status(500).json({ message: 'Server error, please try again later' });
