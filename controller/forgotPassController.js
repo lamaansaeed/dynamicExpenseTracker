@@ -3,7 +3,7 @@ const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
-
+const logger = require('../logger');
 // Configure Gmail transporter
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -39,7 +39,7 @@ exports.forgotPassword = async (req, res) => {
 
         res.json({ message: 'Reset link sent to your email', success: true });
     } catch (error) {
-        console.error('Error:', error);
+        logger.error('Error:', error);
         res.status(500).json({ message: 'An error occurred', success: false });
     }
 };
@@ -66,7 +66,7 @@ exports.resetPassword = async (req, res) => {
 
         res.json({ message: 'Password reset successful', success: true });
     } catch (error) {
-        console.error('Error:', error);
+        logger.error('Error:', error);
         res.status(500).json({ message: 'An error occurred', success: false });
     }
 };

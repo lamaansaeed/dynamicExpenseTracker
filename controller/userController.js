@@ -1,7 +1,7 @@
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-
+const logger =require('../logger');
 exports.signup = async (req, res) => {
     const { name, email, password } = req.body;
 
@@ -22,7 +22,7 @@ exports.signup = async (req, res) => {
         console.log('User created:', newUser);
         res.status(201).json({ message: 'Signup successful!', user: newUser });
     } catch (error) {
-        console.error('Error creating user:', error);
+        logger.error('Error creating user:', error);
         res.status(500).json({ message: 'Signup failed!', error: error.message });
     }
 };
@@ -46,7 +46,7 @@ exports.login = async (req, res) => {
             return res.status(401).json({ message: 'Invalid credentials', success: false });
         }
     } catch (error) {
-        console.error('Error during login:', error);
+        logger.error('Error during login:', error);
         res.status(500).json({ message: 'An error occurred', success: false });
     }
 };

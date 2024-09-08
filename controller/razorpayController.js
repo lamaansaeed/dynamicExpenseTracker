@@ -4,7 +4,7 @@ const User = require('../models/User');
 const Order = require('../models/Order');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
-
+const logger = require('../logger');
 // Initialize Razorpay instance
 const razorpay = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,
@@ -34,7 +34,7 @@ exports.buyPremium = async (req, res) => {
             status: 'pending',
             userId: userId
         });
-        console.log(trackOrder, "order saved in database");
+        logger.info(trackOrder, "order saved in database");
 
         res.status(200).json({
             id: order.id,
@@ -42,7 +42,7 @@ exports.buyPremium = async (req, res) => {
             amount: order.amount
         });
     } catch (error) {
-        console.error(error);
+        logger.error(error);
         res.status(500).send('Error in creating order');
     }
 };

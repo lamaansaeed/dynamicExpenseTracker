@@ -2,16 +2,18 @@ const cors = require('cors');
 const path = require('path');
 const express = require('express');
 const app = express();
-const PORT = 3000;
+
 const User = require('./models/User');
 const Expense = require('./models/Expense');
 const Order =require('./models/Order');
 const Income = require('./models/Income');
 const dotenv = require('dotenv');
 dotenv.config(); // Load environment variables
-const sequelize = require('./database/database')
-
+const sequelize = require('./database/database');
+const PORT = process.env.SERVER_PORT;
+const helmet = require('helmet');
 // Middleware
+app.use(helmet());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());

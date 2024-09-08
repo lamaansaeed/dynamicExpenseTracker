@@ -2,13 +2,13 @@
 const User = require('../models/User');
 const sequelize = require('../database/database');
 const Income = require('../models/Income');
-
+const logger = require('../logger');
 exports.getIncomes = async (req, res) => {
     try {
         const Incomes = await Income.findAll({ where: { userId: req.user.userId } });
         res.json(Incomes);
     } catch (error) {
-        console.error('Error fetching incomes:', error);
+        logger.error('Error fetching incomes:', error);
         res.status(500).json({ message: 'Server error, please try again later' });
     }
 };
@@ -27,7 +27,7 @@ exports.addIncome = async (req, res) => {
         res.status(201).json(income);
     } catch (error) {
         await transaction.rollback();
-        console.error('Error adding income:', error);
+        logger.error('Error adding income:', error);
         res.status(500).json({ message: 'Server error, please try again later' });
     }
 };
@@ -46,7 +46,7 @@ exports.checkPremiumStatus = async (req, res) => {
 
         res.status(200).json(premiumUser);
     } catch (error) {
-        console.error('Error checking premium status:', error);
+        logger.error('Error checking premium status:', error);
         res.status(500).json({ error: 'An internal server error occurred' });
     }
 };
@@ -60,7 +60,7 @@ exports.getLeaderboard = async (req, res) => {
 
         res.json(leaderboard);
     } catch (error) {
-        console.error('Failed to fetch leaderboard data:', error);
+        logger.error('Failed to fetch leaderboard data:', error);
         res.status(500).json({ error: 'Failed to fetch leaderboard data' });
     }
 };
@@ -85,7 +85,7 @@ exports.deleteIncome = async (req, res) => {
         }
     } catch (error) {
         await transaction.rollback();
-        console.error('Error deleting income:', error);
+        logger.error('Error deleting income:', error);
         res.status(500).json({ message: 'Server error, please try again later' });
     }
 };
