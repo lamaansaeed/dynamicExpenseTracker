@@ -1,86 +1,80 @@
 const cors = require('cors');
 const path = require('path');
 const express = require('express');
+const https = require('https');
+const fs = require('fs');
 const app = express();
 
 const User = require('./models/User');
 const Expense = require('./models/Expense');
-const Order =require('./models/Order');
+const Order = require('./models/Order');
 const Income = require('./models/Income');
 const dotenv = require('dotenv');
-dotenv.config(); // Load environment variables
+dotenv.config();
 const sequelize = require('./database/database');
-const PORT = process.env.SERVER_PORT;
 const helmet = require('helmet');
+
+const PORT = process.env.SERVER_PORT || 443; // Use 443 for HTTPS
+
+// Load SSL certificates
+const privateKey = fs.readFileSync(path.join(__dirname, 'ssl', 'server.key'), 'utf8');
+const certificate = fs.readFileSync(path.join(__dirname, 'ssl', 'server.crt'), 'utf8');
+const credentials = { key: privateKey, cert: certificate };
+
 // Middleware
 app.use(helmet());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 
-
-const models = {
-    User,
-    Expense,
-    Order,
-    Income
-};
-
-// Setup associations
+const models = { User, Expense, Order, Income };
 Object.keys(models).forEach(modelName => {
     if (models[modelName].associate) {
         models[modelName].associate(models);
     }
 });
-// Sync the model with the database (create table if not exists)
+
 sequelize.sync({ alter: true })
     .then(() => {
-        console.log('User table synced successfully');
+        console.log('Database synced successfully');
     })
     .catch((error) => {
-        console.error('Error syncing User table:', error);
+        console.error('Error syncing database:', error);
     });
-    // Expense.sync({ alter: true })
-    // .then(() => {
-    //     console.log('expense table synced successfully');
-    // })
-    // .catch((error) => {
-    //     console.error('Error syncing User table:', error);
-    // });
-    // User.sync({ alter: true })
-    // .then(() => {
-    //     console.log('User table synced successfully');
-    // })
-    // .catch((error) => {
-    //     console.error('Error syncing User table:', error);
-    // });
 
-// Serve login.html as the landing page
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
-// Import Routes
 const userRoutes = require('./routes/user');
 const expenseRoutes = require('./routes/expense');
 const razorpayRoutes = require('./routes/razorpay');
 const forgotpassRoutes = require('./routes/forgotPass');
 const incomeRoutes = require('./routes/income');
 const reportRoutes = require('./routes/report');
-// const dotenv = require('dotenv');
-// dotenv.config();
-app.use('/', userRoutes); // All user-related routes
-app.use('/', expenseRoutes); // Use the expense routes
-app.use('/',incomeRoutes);
-app.use('/',razorpayRoutes);
-app.use('/',forgotpassRoutes);
-app.use('/',reportRoutes);
+app.use('/', userRoutes);
+app.use('/', expenseRoutes);
+app.use('/', incomeRoutes);
+app.use('/', razorpayRoutes);
+app.use('/', forgotpassRoutes);
+app.use('/', reportRoutes);
 
-// Endpoint to get Razorpay key
 app.get('/api/config', (req, res) => {
     res.json({ razorpayKeyId: process.env.RAZORPAY_KEY_ID });
-  });
-// Start the server
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+});
+
+// Create HTTPS server
+const httpsServer = https.createServer(credentials, app);
+
+httpsServer.listen(PORT, () => {
+    console.log(`Secure server is running on https://localhost:${PORT}`);
+});
+
+// Optional: HTTP server to redirect traffic to HTTPS
+const httpApp = express();
+httpApp.get('*', (req, res) => {
+    res.redirect(`https://${req.headers.host}${req.url}`);
+});
+http.createServer(httpApp).listen(80, () => {
+    console.log('HTTP server is running on http://localhost:80');
 });
