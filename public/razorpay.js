@@ -1,3 +1,12 @@
+// Fetch Razorpay key and expose it to your frontend JS
+fetch('/api/config')
+  .then(response => response.json())
+  .then(data => {
+    window.razorpayKeyId = data.razorpayKeyId;
+  })
+  .catch(error => {
+    console.error('Error fetching Razorpay key:', error);
+  });
 document.getElementById('buy-premium-btn').onclick = async function(e) {
     e.preventDefault();
     const token = localStorage.getItem('token');

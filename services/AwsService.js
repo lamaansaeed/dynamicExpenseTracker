@@ -20,19 +20,24 @@ async function generatePDF(htmlContent, fileName) {
         const browser = await puppeteer.launch({
             args: ['--no-sandbox', '--disable-setuid-sandbox']
         });
+	    console.log(browser,'first step of generating pdf');
         const page = await browser.newPage();
         await page.setContent(htmlContent);
+	 if(!page){
+               console.log('page not formed');
+	 }
+	    if(page){console.log('page formed');}
         const pdfBuffer = await page.pdf({ format: 'A4' });
         await browser.close();
 
         // Save PDF locally
         const pdfPath = path.join(__dirname, fileName);
+	   if(!pdfPath){ console.log('pdf path in awsservice is not working');}
         fs.writeFileSync(pdfPath, pdfBuffer);
 
         return pdfPath;
     } catch (error) {
         console.error('Error generating PDF:', error);
-        throw new Error('PDF generation failed');
     }
 }
 

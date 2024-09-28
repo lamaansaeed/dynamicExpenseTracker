@@ -5,14 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Expense Tracker</title>
     <link rel="stylesheet" href="style.css">
-    <script>
-        // Fetch Razorpay key and expose it to your frontend JS
-        fetch('/api/config')
-          .then(response => response.json())
-          .then(data => {
-            window.razorpayKeyId = data.razorpayKeyId;
-          });
-      </script>
+ 
 </head>
 <body>
     <h1>Expense Tracker</h1>

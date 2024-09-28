@@ -61,3 +61,7 @@ document.getElementById('forgotPasswordForm').addEventListener('submit', async f
         console.error('Error:', error);
     }
 });
+document.getElementById('signupButton').addEventListener('click', function() {
+            // Redirect to signup.html
+            window.location.href = 'signup.html';
+        });

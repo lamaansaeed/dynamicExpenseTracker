@@ -64,6 +64,7 @@ router.post('/download-report', async (req, res) => {
 
   try {
       const pdfPath = await generatePDF(htmlContent, fileName);
+	  console.log(pdfPath,'it is undefined');
       const s3Url = await uploadToS3(pdfPath, bucketName, keyName);
 
       // Remove the PDF from the local server after uploading

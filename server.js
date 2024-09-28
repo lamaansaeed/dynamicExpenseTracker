@@ -2,6 +2,7 @@ const cors = require('cors');
 const path = require('path');
 const express = require('express');
 const https = require('https');
+const http = require('http');
 const fs = require('fs');
 const app = express();
 
@@ -13,8 +14,8 @@ const dotenv = require('dotenv');
 dotenv.config();
 const sequelize = require('./database/database');
 const helmet = require('helmet');
-
-const PORT = process.env.SERVER_PORT || 443; // Use 443 for HTTPS
+console.log(process.env.SERVER_PORT);
+const PORT = process.env.SERVER_PORT ||443; // Use 443 for HTTPS
 
 // Load SSL certificates
 const privateKey = fs.readFileSync(path.join(__dirname, 'ssl', 'server.key'), 'utf8');
@@ -22,7 +23,18 @@ const certificate = fs.readFileSync(path.join(__dirname, 'ssl', 'server.crt'), '
 const credentials = { key: privateKey, cert: certificate };
 
 // Middleware
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      connectSrc: ["'self'", 'http://51.20.8.72:3000'], // Allow connections to your server 
+      scriptSrc: ["'self'", "https://checkout.razorpay.com","https://checkout.razorpay.com/v1/checkout.js"],
+      frameSrc: ["'self'", "https://api.razorpay.com", "https://checkout.razorpay.com"], // Allow Razorpay iframes
+      imgSrc: ["'self'", "https://*.razorpay.com"], // Optionally allow Razorpay images
+      styleSrc: ["'self'", "'unsafe-inline'"] // Allow inline styles (if needed)
+    }
+  }
+}));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
@@ -66,15 +78,7 @@ app.get('/api/config', (req, res) => {
 // Create HTTPS server
 const httpsServer = https.createServer(credentials, app);
 
-httpsServer.listen(PORT, () => {
+httpsServer.listen(PORT,'0.0.0.0', () => {
     console.log(`Secure server is running on https://localhost:${PORT}`);
 });
 
-// Optional: HTTP server to redirect traffic to HTTPS
-const httpApp = express();
-httpApp.get('*', (req, res) => {
-    res.redirect(`https://${req.headers.host}${req.url}`);
-});
-http.createServer(httpApp).listen(80, () => {
-    console.log('HTTP server is running on http://localhost:80');
-});
